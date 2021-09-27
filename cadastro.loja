@@ -1,0 +1,275 @@
+					/**Atividade Lógica de Programação - Ciência da Computação - Anhembi Morumbi**/
+									/**Carolina Chaves Ribeiro de Souza**/							
+									
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+
+					typedef struct 
+					{ /** Criação de uma struct para armazenar os dados do cliente. **/
+							char nome[30];
+							int ano_nasc; 
+							float mont_gastos; 
+					}CLIENTE;
+
+					typedef struct 
+					{ /** Define a struct CLIENTE como ponteiro e cria variável para quantidade de cadastros. **/
+							CLIENTE *pClientes; 
+							int qntdClientes; 
+					}CADASTRO; 
+					
+void CadastroVazio (CADASTRO *cadP);
+void RealocarMaisQuantidade (CADASTRO *cadP, int num);
+void MenuPrincipal ();
+void CadastrarCliente(char nome[], int ano_nasc, float mont_gastos, CADASTRO *cadP, int num);
+void ConsultaCadastro(CADASTRO elenco);
+CADASTRO ExcluirCliente (char nome[], CADASTRO elenco);
+CADASTRO AtualizarCliente (char nome [], CADASTRO elenco);
+void ZeraGastosMes (CADASTRO elenco);
+void ExibirMelhorComprador(CADASTRO elenco);
+void MontantePrecisoCliente(char pesquisaNome[], CADASTRO elenco);
+
+		
+		int main () /** Início do programa **/
+{
+					setlocale (LC_ALL, "Portuguese"); /** Permite a acentuação das palavras. */ 
+					system("color 50");
+					
+					/** Momento de declarar e iniciar as variáveis **/
+								CADASTRO elenco; 
+								CadastroVazio(&elenco);
+								elenco.qntdClientes = 0; 
+	
+								char nome [30];
+								int ano_nasc, opcao = 8; 
+								float mont_gastos; 
+								char pesquisaNome[30];
+								int i, x = 0;
+		
+				while (opcao != 0) /** Quando a opção inserida for DIFERENTE de 0, o programa executa o switch. **/
+				{
+			
+						switch (opcao) /** Vai dar início as condiçoes do menu principal. **/
+						{
+							case 1: /** Cadastrar um novo cliente. **/
+						
+								printf ("\nVocê selecionou a opção de cadastrar um novo cliente. Insira: \n");
+									printf ("\n Nome do cliente: ");
+										scanf ("%s", nome);
+				
+									printf ("\n Ano de nascimento: ");
+										scanf ("%d", &ano_nasc);
+				
+									printf ("\n Montante de dastos: ");
+										scanf ("%f", &mont_gastos);
+				
+								/** Chamando a função de cadastro. **/
+								CadastrarCliente(nome, ano_nasc, mont_gastos, &elenco, elenco.qntdClientes);
+								elenco.qntdClientes += 1;
+						
+								printf("\n Cadastro realizado com sucesso!");
+								opcao = 8; 
+						break;
+				
+				
+							case 2: /** Exibe todos os clientes já cadastrados. **/
+						
+								ConsultaCadastro(elenco);
+								opcao = 8;
+						break;
+				
+				
+							case 3: /** Excluir cadastro de algum cliente já cadastrado. **/
+					
+								printf ("\n Digite o nome do cliente que deseja excluir o cadastro: ");
+									scanf ("%s", pesquisaNome);
+										printf ("\nCliente excluído com sucesso!\n");
+						
+								elenco = ExcluirCliente(pesquisaNome, elenco);
+								opcao = 8;
+						break;
+				
+				
+							case 4: /** Atualizar o montante de gastos de um cliente. **/
+					
+								printf ("\n Digite o nome do cliente que deseja atualizar: ");
+									scanf ("%s", pesquisaNome);
+										printf ("\n Valor atualizado com sucesso!\n");
+				
+								elenco = AtualizarCliente(pesquisaNome, elenco);
+								opcao = 8;
+						break;
+				
+							case 5: /** Zerar o montante de gastos do mês. **/
+					
+								ZeraGastosMes (elenco);
+								opcao = 8;
+						break;
+				
+							case 6: /** Mostrar qual cliente foi o melhor comprador. **/
+					
+								ExibirMelhorComprador(elenco);
+								opcao = 8;
+						break;
+				
+							case 7: /** Montante de gastos de um cliente específico. **/
+					
+								x = 0; 
+								printf ("\nDigite o nome completo do desejado: ");
+									scanf ("%s", &pesquisaNome); 
+									
+								MontantePrecisoCliente(pesquisaNome, elenco);
+								opcao = 8;
+						break;
+				
+				
+							default:
+						
+								MenuPrincipal ();
+									scanf ("%d", &opcao);
+						break;		
+				}
+			}
+
+	
+		return 0;
+}
+
+void CadastroVazio (CADASTRO *cadP)
+{
+	
+		cadP->pClientes = (CLIENTE *) calloc(10, sizeof(CLIENTE));
+}
+
+void RealocarMaisQuantidade (CADASTRO *cadP, int num)
+{
+		cadP->pClientes = (CLIENTE*) calloc(10 *(1+ (num/10)),sizeof(CLIENTE));
+}	
+
+void MenuPrincipal ()
+{
+		printf ("\n\n----------Menu Principal - Loja 123----------\n\n");
+			printf ("\n 1. Cadastrar um novo cliente.");
+			printf ("\n 2. Consultar clientes cadastrados.");
+			printf ("\n 3. Excluir cadastro.");
+			printf ("\n 4. Atualizar montante de gastos.");
+			printf ("\n 5. Zerar montante de gastos por virada do mês.");
+			printf ("\n 6. Listar o cliente melhor comprador.");
+			printf ("\n 7. Listar montante gastos de um cliente específico.");
+			printf ("\n 0. Sair.");
+		printf ("\n Escolha uma das opções acima: ");
+}
+
+void CadastrarCliente(char nome[], int ano_nasc, float mont_gastos, CADASTRO *cadP, int num)
+{
+		printf ("\n NUM: %d", num);
+			if (num >= 10 && num % 10 == 0)
+			{
+				cadP->pClientes = (CLIENTE *) realloc (cadP->pClientes, 10* ((num/10)+1) * sizeof(CLIENTE));		
+			}
+	
+		CLIENTE p;
+		strncpy (p.nome, nome, 30);
+		p.ano_nasc = ano_nasc; 
+		p.mont_gastos = mont_gastos;
+	
+		memcpy ((cadP->pClientes+num), &p, sizeof(CLIENTE));
+}
+
+void ConsultaCadastro(CADASTRO elenco) 
+{
+		for (int i = 0; i< elenco.qntdClientes; i++)
+		{
+			printf ("\n Cliente: %d\n", i);
+			printf ("\n Nome: %s", (elenco.pClientes+i)->nome);
+			printf ("\n Ano de nascimento: %d", (elenco.pClientes+i)->ano_nasc); 
+			printf ("\n Gastos: %f\n\n", (elenco.pClientes+i)->mont_gastos);
+		}
+}
+
+CADASTRO ExcluirCliente (char nome[], CADASTRO elenco)
+{
+		CADASTRO elencoTmp;
+		RealocarMaisQuantidade(&elencoTmp, elenco.qntdClientes);
+		elencoTmp.qntdClientes = elenco.qntdClientes;
+	
+		int iTmp = 0; 
+			for (int i = 0; i < elenco.qntdClientes; i++)
+			{
+				if (strcmp(nome, (elenco.pClientes+i)->nome) != 0)
+				{
+					int x = i - iTmp;
+					memcpy(elencoTmp.pClientes+x, elenco.pClientes+i, sizeof(CLIENTE));
+				} else 
+				{
+				iTmp = 1;
+				}
+			}
+		elencoTmp.qntdClientes -= 1;
+		return elencoTmp;
+}
+
+CADASTRO AtualizarCliente (char nome [], CADASTRO elenco)
+{
+		float gastoAtual;
+			for (int i = 0; i<elenco.qntdClientes; i++)
+			{
+				if (strcmp(nome, (elenco.pClientes+i)->nome) == 0);
+				{
+					printf ("\n Digite o valor gasto pelo cliente: ");
+						scanf ("%f", &gastoAtual);
+					(elenco.pClientes+i)->mont_gastos = gastoAtual;
+				}
+			}
+		return elenco;
+}
+
+void ZeraGastosMes (CADASTRO elenco)
+{	
+		for (int i = 0; i < elenco.qntdClientes; i++)
+		{
+		
+			(elenco.pClientes+i)->mont_gastos = 0.0;
+		}
+		printf ("\n Gastos do mês zerados com sucesso\n");
+}
+
+void ExibirMelhorComprador(CADASTRO elenco)
+{	
+		float maiorGasto = 0.0;
+		CLIENTE *p;
+			for (int i = 0; i < elenco.qntdClientes; i++)
+			{
+			printf ("\n Montante de gastos do cliente %s: %f", (elenco.pClientes+i)->nome, (elenco.pClientes+i)->mont_gastos);
+					printf ("\n O MELHOR COMPRADOR FOI");
+
+				if ((elenco.pClientes+i)->mont_gastos > maiorGasto)
+				{
+					maiorGasto = (elenco.pClientes+i)->mont_gastos;
+					p = elenco.pClientes+i; 			
+				}
+			}
+		printf ("\nNome: %s", p->nome);
+		printf ("\nAno de nascimento: %d", p->ano_nasc);
+		printf ("\nGastos: %f \n", p->mont_gastos);
+}
+
+void MontantePrecisoCliente(char pesquisaNome[], CADASTRO elenco)
+{
+	int i, x = 0;
+		for (i = 0; i <= elenco.qntdClientes; i++)
+		{
+			if (!strcmp (pesquisaNome, (elenco.pClientes+i)->nome))
+			{
+				printf ("Nome completo: %s\n", (elenco.pClientes+i)->nome);
+				printf ("Ano de nascimento: %i\n", (elenco.pClientes+i)->ano_nasc);
+				printf ("Montante de gastos mensais: %f\n", (elenco.pClientes+i)->mont_gastos);
+				x++;
+			}
+			
+		}	if (x == 0)
+			{
+			printf ("\nCliente não cadastrado!\n\n");
+			}
+}
